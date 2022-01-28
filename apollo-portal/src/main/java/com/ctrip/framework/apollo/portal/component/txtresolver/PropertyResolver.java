@@ -44,28 +44,29 @@ public class PropertyResolver implements ConfigTextResolver {
 
   @Override
   public ItemChangeSets resolve(long namespaceId, String configText, List<ItemDTO> baseItems) {
-
+    // 创建 Item Map ，以 lineNum 为 键
     Map<Integer, ItemDTO> oldLineNumMapItem = BeanUtils.mapByKey("lineNum", baseItems);
+    // 创建 Item Map ，以 key 为 键
     Map<String, ItemDTO> oldKeyMapItem = BeanUtils.mapByKey("key", baseItems);
 
     //remove comment and blank item map.
     oldKeyMapItem.remove("");
-
+    // 按照拆分 Property 配置
     String[] newItems = configText.split(ITEM_SEPARATOR);
     Set<String> repeatKeys = new HashSet<>();
     if (isHasRepeatKey(newItems, repeatKeys)) {
       throw new BadRequestException(String.format("Config text has repeated keys: %s, please check your input.", repeatKeys.toString()));
     }
-
+    // 创建 ItemChangeSets 对象，并解析配置文件到 ItemChangeSets 中。
     ItemChangeSets changeSets = new ItemChangeSets();
     Map<Integer, String> newLineNumMapItem = new HashMap<>();//use for delete blank and comment item
     int lineCounter = 1;
     for (String newItem : newItems) {
       newItem = newItem.trim();
       newLineNumMapItem.put(lineCounter, newItem);
+      // 使用行号，获得已存在的 ItemDTO
       ItemDTO oldItemByLine = oldLineNumMapItem.get(lineCounter);
-
-      //comment item
+      //comment item 注释 Item
       if (isCommentItem(newItem)) {
 
         handleCommentLine(namespaceId, oldItemByLine, newItem, lineCounter, changeSets);
@@ -82,8 +83,9 @@ public class PropertyResolver implements ConfigTextResolver {
 
       lineCounter++;
     }
-
+    // 删除注释和空行配置项
     deleteCommentAndBlankItem(oldLineNumMapItem, newLineNumMapItem, changeSets);
+    // 删除普通配置项
     deleteNormalKVItem(oldKeyMapItem, changeSets);
 
     return changeSets;

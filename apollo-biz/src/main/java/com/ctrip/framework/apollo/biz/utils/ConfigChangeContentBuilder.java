@@ -34,14 +34,18 @@ public class ConfigChangeContentBuilder {
   private List<ItemPair> updateItems = new LinkedList<>();
   private List<Item> deleteItems = new LinkedList<>();
 
-
+  /**
+   * 创建 Item 集合
+   */
   public ConfigChangeContentBuilder createItem(Item item) {
     if (!StringUtils.isEmpty(item.getKey())){
       createItems.add(cloneItem(item));
     }
     return this;
   }
-
+  /**
+   * 更新 Item 集合
+   */
   public ConfigChangeContentBuilder updateItem(Item oldItem, Item newItem) {
     if (!oldItem.getValue().equals(newItem.getValue())){
       ItemPair itemPair = new ItemPair(cloneItem(oldItem), cloneItem(newItem));
@@ -49,7 +53,9 @@ public class ConfigChangeContentBuilder {
     }
     return this;
   }
-
+  /**
+   * 删除 Item 集合
+   */
   public ConfigChangeContentBuilder deleteItem(Item item) {
     if (!StringUtils.isEmpty(item.getKey())) {
       deleteItems.add(cloneItem(item));

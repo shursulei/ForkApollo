@@ -50,9 +50,21 @@ public class ReleaseMessageScanner implements InitializingBean {
   private BizConfig bizConfig;
   @Autowired
   private ReleaseMessageRepository releaseMessageRepository;
+  /**
+   * 从 DB 中扫描 ReleaseMessage 表的频率，单位：毫秒
+   */
   private int databaseScanInterval;
+  /**
+   * 监听器数组
+   */
   private final List<ReleaseMessageListener> listeners;
+  /**
+   * 定时任务服务
+   */
   private final ScheduledExecutorService executorService;
+  /**
+   * 最后扫描到的 ReleaseMessage 的编号
+   */
   private final Map<Long, Integer> missingReleaseMessages; // missing release message id => age counter
   private long maxIdScanned;
 

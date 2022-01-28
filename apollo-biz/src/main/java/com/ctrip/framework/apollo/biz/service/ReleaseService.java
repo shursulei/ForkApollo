@@ -191,9 +191,9 @@ public class ReleaseService {
   @Transactional
   public Release publish(Namespace namespace, String releaseName, String releaseComment,
                          String operator, boolean isEmergencyPublish) {
-
+    // 校验锁定
     checkLock(namespace, isEmergencyPublish, operator);
-
+    // 获得 Namespace 的普通配置 Ma
     Map<String, String> operateNamespaceItems = getNamespaceItems(namespace);
 
     Namespace parentNamespace = namespaceService.findParentNamespace(namespace);
@@ -344,11 +344,13 @@ public class ReleaseService {
   private Release masterRelease(Namespace namespace, String releaseName, String releaseComment,
                                 Map<String, String> configurations, String operator,
                                 int releaseOperation, Map<String, Object> operationContext) {
+    // 获得最后有效的 Release 对象
     Release lastActiveRelease = findLatestActiveRelease(namespace);
     long previousReleaseId = lastActiveRelease == null ? 0 : lastActiveRelease.getId();
+    // 创建 Release 对象，并保存
     Release release = createRelease(namespace, releaseName, releaseComment,
                                     configurations, operator);
-
+    // 创建 ReleaseHistory 对象，并保存
     releaseHistoryService.createReleaseHistory(namespace.getAppId(), namespace.getClusterName(),
                                                namespace.getNamespaceName(), namespace.getClusterName(),
                                                release.getId(), previousReleaseId, releaseOperation,

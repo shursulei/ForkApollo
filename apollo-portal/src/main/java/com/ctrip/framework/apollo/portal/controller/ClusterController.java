@@ -46,10 +46,11 @@ public class ClusterController {
   @PostMapping(value = "apps/{appId}/envs/{env}/clusters")
   public ClusterDTO createCluster(@PathVariable String appId, @PathVariable String env,
                                   @Valid @RequestBody ClusterDTO cluster) {
+    // 设置 ClusterDTO 的创建和修改人为当前管理员
     String operator = userInfoHolder.getUser().getUserId();
     cluster.setDataChangeLastModifiedBy(operator);
     cluster.setDataChangeCreatedBy(operator);
-
+    // 创建 Cluster 到 Admin Service
     return clusterService.createCluster(Env.valueOf(env), cluster);
   }
 

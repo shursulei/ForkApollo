@@ -33,13 +33,19 @@ import javax.persistence.Table;
 @SQLDelete(sql = "Update Cluster set isDeleted = 1 where id = ?")
 @Where(clause = "isDeleted = 0")
 public class Cluster extends BaseEntity implements Comparable<Cluster> {
-
+  /**
+   * 名字
+   */
   @Column(name = "Name", nullable = false)
   private String name;
-
+  /**
+   * app 编号
+   */
   @Column(name = "AppId", nullable = false)
   private String appId;
-
+  /**
+   * 父 app 编号
+   */
   @Column(name = "ParentClusterId", nullable = false)
   private long parentClusterId;
 
